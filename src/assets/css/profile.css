@@ -1,0 +1,41 @@
+/* Profile */
+
+/* userProfile */
+.title{
+  position: relative;
+  top: 5px;
+  text-align: center;
+}
+.select-container{
+  position: relative;
+  text-align: center;
+  margin-top: 8px;
+  width: 98%;
+  left: 1%;
+}
+.el-menu-item{
+  position: relative;
+  width: 25%;
+}
+
+/* UserAllOrder */
+.pagination-content{
+  z-index: 99;
+  text-align: center;
+}
+.table-container{
+  margin-top: 2%;
+  margin-left: 3%;
+  margin-right: 3%;
+}
+
+/* UserNoPayment */
+.descriptions{
+  margin-top: 5%;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.pay-btn-content{
+  margin-left: 65%;
+  margin-top: 2%;
+}
