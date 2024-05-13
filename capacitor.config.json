@@ -1,0 +1,8 @@
+{
+  "appId": "com.zxy.map",
+  "appName": "在线打车司机端",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}

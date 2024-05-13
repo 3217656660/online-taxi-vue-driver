@@ -1,6 +1,8 @@
 import { Error_Msg } from '@/common/string';
 import { requestGateway } from '@/network/request';
 import store from '@/store';
+import GeoLocationPlugin from './GeoLocationPlugin';
+
 export const submitFormMixin = {
   methods: {
     /**
@@ -108,5 +110,50 @@ export const formatDateMixin= {
       let formattedDate = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
       return formattedDate
     }
+  }
+}
+
+export const geoLocationWithSDK = {
+  methods: {
+    async geoLocation(map, vm) {
+      try {
+        const result = await GeoLocationPlugin.getLocation();
+        map.setZoomAndCenter(18, [result.longitude, result.latitude]);
+        store.commit('setCurrentLocation', {
+          longitude: result.longitude,
+          latitude: result.latitude,
+          address: result.address,
+        });
+        store.commit('setCity', result.city);
+        store.commit('setStartCity', result.city);
+        store.commit('setEndCity', result.city);
+        console.log('vue :getCurrentLocation :>> ', JSON.stringify(store.state.CurrentLocation));
+        console.log('vue :city :>> ', store.state.City);
+
+        if (vm.marker != null) {
+          vm.marker.setMap(null);
+          vm.marker = null;
+        }
+        //添加点标记
+        const marker = new vm.aMap.Marker({
+          icon: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+          position: [store.state.CurrentLocation.longitude, store.state.CurrentLocation.latitude],
+          offset: new vm.aMap.Pixel(-13, -30)
+        });
+        marker.setMap(this.map);
+        vm.marker = marker;
+      } catch (e) {
+        console.error('vue: Error getting location:', e);
+      }
+    }
+  }
+}
+
+export const sleepMixin = {
+  methods: {
+    //自定义睡眠函数
+    sleep(time) {
+      return new Promise(resolve => setTimeout(resolve, time));
+    },
   }
 }

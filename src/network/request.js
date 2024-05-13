@@ -49,7 +49,7 @@ export function requestGateway(config){
       timeout: 5000,
       headers: {
         'X-Token': store.state.XToken,
-        'mobile': store.state.User.mobile
+        'mobile': store.state.Driver.mobile
       },
     })
     
@@ -163,17 +163,21 @@ export function requestMapSearch(config){
  * @returns Promise对象 其中then中的参数为匹配到的信息列表
  */
 export function requestMapSearchSuggest(config){
-  //先获取所在城市
-  const url = MapSearchSuggestUrl + '?key=' + MapServerApiKey +
+  //先获取所在城市 
+  const url = 
+  MapSearchSuggestUrl + 
+  '?key=' + MapServerApiKey +
   '&keywords=' + config.searchKeywords + 
-  '&city=' + config.city + '&citylimit=true';
+  '&page_size=' + config.pageSize +
+  '&page_num=' + config.pageNum +
+  '&location=' + store.state.CurrentLocation.longitude + ',' + store.state.CurrentLocation.latitude + 
+  '&radius=40000';
   const instance = axios.create({
     baseURL:url,
     timeout: 5000
   })
   instance.interceptors.response.use(result => {
-    console.log('result.data :>> ', result.data);
-    return result.data.tips;
+    return result.data.pois;
   })
   return instance()
 }

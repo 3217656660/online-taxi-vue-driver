@@ -1,15 +1,10 @@
 <template>
   <div>
     <tab-bar-component>
-      <tab-bar-item-component path="/home">
-        <i class="el-icon-s-home" slot="item-icon" style="color: darkgray;"></i>
-        <i class="el-icon-s-home" slot="item-icon-active"></i>
-        <div slot="item-text">首页</div>
-      </tab-bar-item-component>
-      <tab-bar-item-component path="/take">
-        <i class="el-icon-s-promotion" slot="item-icon" style="color: darkgray;"></i>
-        <i class="el-icon-s-promotion" slot="item-icon-active"></i>
-        <div slot="item-text">打车</div>
+      <tab-bar-item-component path="/accept">
+        <i class="el-icon-s-order" slot="item-icon" style="color: darkgray;"></i>
+        <i class="el-icon-s-order" slot="item-icon-active"></i>
+        <div slot="item-text">接单</div>
       </tab-bar-item-component>
       <tab-bar-item-component path="/message">
         <i class="el-icon-s-comment" slot="item-icon" style="color: darkgray;"></i>

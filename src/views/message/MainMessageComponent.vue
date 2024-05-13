@@ -39,70 +39,7 @@
   
   </div>
 </template>
-<!-- {
-  "sender": "司机",
-  "message": "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
-},
-{
-  "sender": "乘客",
-  "message": "222222222222222222222222222222222222222222222222222222222222"
-},
-{
-  "sender": "司机",
-  "message": "333333333333333333333333333"
-},
-{
-  "sender": "乘客",
-  "message": "4444444444"
-},
-{
-  "sender": "乘客",
-  "message": "4444444444"
-},
-{
-  "sender": "乘客",
-  "message": "4444444444"
-},
-{
-  "sender": "乘客",
-  "message": "你好4444444444"
-},
-{
-  "sender": "乘客",
-  "message": "你好4444444444"
-},
-{
-  "sender": "乘客",
-  "message": "你好4444444444"
-},
-{
-  "sender": "乘客",
-  "message": "你好4444444444"
-},
-{
-  "sender": "乘客",
-  "message": "你好4444444444"
-},
-{
-  "sender": "乘客",
-  "message": "你好4444444444"
-},
-{
-  "sender": "乘客",
-  "message": "你好4444444444"
-},
-{
-  "sender": "乘客",
-  "message": "你好4444444444"
-},
-{
-  "sender": "乘客",
-  "message": "你好4444444444"
-},
-{
-  "sender": "乘客",
-  "message": "你好4444444444"
-}, -->
+
 <script>
 import { makeElButtonBlurMixin } from '@/common/mixin';
 import NavBarComponent from '@/components/navbar/NavBarComponent.vue';

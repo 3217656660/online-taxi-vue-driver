@@ -3,9 +3,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
-const HomeComponent = () => import("../views/home/HomeComponent")
+const AcceptComponent = () => import("../views/accept/AcceptComponent")
 const ProfileComponent = () => import("../views/profile/ProfileComponent")
-const TakeComponent = () => import("../views/take/TakeComponent")
 const LoginComponent = () => import("../components/login/LoginComponent")
 const RegisterComponent = () => import("../components/register/RegisterComponent")
 const FindPasswordComponent = () => import("../components/findPassword/FindPasswordComponent")
@@ -17,6 +16,8 @@ const UserTakingOrderComponent = () => import("../views/profile/UserTakingOrderC
 const MainMessageComponent = () => import("../views/message/MainMessageComponent")
 const SettingComponent = () => import("../views/profile/SettingComponent")
 const OrderItemComponent = () => import("@/views/profile/OrderItemComponent")
+const UpdatePasswordComponent = () => import('@/components/findPassword/UpdatePasswordComponent')
+
 
 //2.通过Vue.use(插件)，安装插件
 Vue.use(VueRouter)
@@ -25,11 +26,7 @@ Vue.use(VueRouter)
 const routes = [
   {//默认路由，自己重定向到主页
     path: '',
-    redirect: '/home'
-  },
-  {
-    path: '/home',
-    component: HomeComponent
+    redirect: '/login'
   },
   {
     path: '/profile',
@@ -61,10 +58,6 @@ const routes = [
     ]
   },
   {
-    path: '/take',
-    component: TakeComponent
-  },
-  {
     path: '/login',
     component: LoginComponent
   },
@@ -77,6 +70,10 @@ const routes = [
     component: FindPasswordComponent
   },
   {
+    path: '/updatePassword',
+    component: UpdatePasswordComponent
+  },
+  {
     path: '/agreement',
     component: AgreementComponent
   },
@@ -87,6 +84,10 @@ const routes = [
   {
     path: '/orderItem',
     component: OrderItemComponent
+  },
+  {
+    path: '/accept',
+    component: AcceptComponent
   }
 
 ]

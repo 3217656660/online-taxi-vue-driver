@@ -23,8 +23,6 @@ export default {
       if (user[key] !== '' && user[key] !== -1 && user[key] !== undefined)
         state.User[key] = user[key];
     }
-    //将更新的用户信息保存到本地永久仓库
-    localStorage.setItem('User', JSON.stringify(state.User));
   },
 
 
@@ -39,6 +37,8 @@ export default {
       if (driver[key] !== '' && driver[key] !== -1 && driver[key] !== undefined)
         state.Driver[key] = driver[key];
     }
+    //将更新的用户信息保存到本地永久仓库
+    localStorage.setItem('Driver', JSON.stringify(state.Driver));
   },
 
 

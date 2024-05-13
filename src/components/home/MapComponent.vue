@@ -12,10 +12,12 @@ window._AMapSecurityConfig = {
 import AMapLoader from '@amap/amap-jsapi-loader'; //导入默认的不加外面括号
 export default {
   name: "MapComponent",
+  mixins: [geoLocationWithSDK],
   data() {
     return {
       map: null ,//初始化地图对象
       aMap: null,
+      marker: null,
     }
   },
   mounted() {
@@ -46,13 +48,9 @@ export default {
             resizeEnable: true,
           });
           
-          // 设置定位模式为设备模式
-          this.map.addControl(new AMap.Geolocation({
-            enableHighAccuracy: true, 
-            provider: 'device', 
-            position: 'LT',
-            zoomToAccuracy: true,
-          }));
+          //定位并设置中心点,并添加定位点
+          //this.geoLocation(this.map, this);
+          
           //放大缩小,位置左上
           this.map.addControl(new AMap.ToolBar({position: 'RT'}));
         })

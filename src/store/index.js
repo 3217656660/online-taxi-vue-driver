@@ -8,34 +8,34 @@ import mutations from "./mutations";
 Vue.use(Vuex);
 
 //获取本地存储的用户信息，并初始化到vuex中，注意：在修改的时候要将本地永久存储的一并需改
-let localUser = JSON.parse( localStorage.getItem('User') )
-if ( localUser === null ) {
-  localUser = {
-    id: -1,
+let localDriver = JSON.parse( localStorage.getItem('Driver') )
+if ( localDriver === null ) {
+  localDriver = {
+    id: 0,
     username: '',
     mobile: '',
     password: '',
-    email: ''
+    email: '',
+    carType: '',
+    carNumber: '',
+    createTime: '',
   };
 }
 
 const state = {
   XToken: localStorage.getItem('X-Token'),
-  User: {
-    id: localUser.id,
-    username: localUser.username,
-    mobile: localUser.mobile,
-    password: localUser.password,
-    email: localUser.email
-  },
-  Driver:{
-    id: 0,
-    mobile: '',
-    carType: '',
-    carNumber: '',
+  Driver: {
+    id: localDriver.id,
+    username: localDriver.username,
+    mobile: localDriver.mobile,
+    password: localDriver.password,
+    email: localDriver.email,
+    carType: localDriver.carType,
+    carNumber: localDriver.carNumber,
+    createTime: localDriver.createTime,
   },
   UserCreateOrderVo: {
-    userId: localUser.id,
+    userId: 0,
     startAddress: '',
     startAddressLongitude: 0,
     startAddressLatitude: 0,
@@ -68,12 +68,31 @@ const state = {
   City: '',
   StartCity:'',
   EndCity: '',
-  HomePosition: [],
-  StartPosition: [],
-  EndPosition: [],
-  AcceptPosition: [],
-  IsLogin: localStorage.getItem('IsLogin')
+  HomePosition: {
+    longitude: 0,
+    latitude: 0,
+    address: '',
+  },
 
+  StartPosition: {
+    longitude: 0,
+    latitude: 0,
+    address: '',
+  },
+
+  EndPosition: {
+    longitude: 0,
+    latitude: 0,
+    address: '',
+  },
+
+  AcceptPosition: [],
+  IsLogin: localStorage.getItem('IsLogin'),
+  CurrentLocation: {
+    longitude: 118.5079,
+    latitude: 31.6704,
+    address: '马鞍山市市人民政府',
+  },
 };
 
 //2.创建对象
