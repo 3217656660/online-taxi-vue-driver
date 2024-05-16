@@ -165,6 +165,18 @@ export default {
   },
 
 
+  /**
+   * 更新定位
+   * @param {*} state 
+   * @param {*} location 
+   */
+  setCurrentLocation(state, currentLocation) {
+    const keys = Object.keys(state.CurrentLocation)
+    for (const key of keys) {
+      if (currentLocation[key] !== '' && currentLocation[key] !== -1 && currentLocation[key] !== undefined)
+        state.CurrentLocation[key] = currentLocation[key];
+    }
+  },
 
 
 }

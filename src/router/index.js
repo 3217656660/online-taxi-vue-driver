@@ -17,7 +17,10 @@ const MainMessageComponent = () => import("../views/message/MainMessageComponent
 const SettingComponent = () => import("../views/profile/SettingComponent")
 const OrderItemComponent = () => import("@/views/profile/OrderItemComponent")
 const UpdatePasswordComponent = () => import('@/components/findPassword/UpdatePasswordComponent')
-
+const AcceptListComponent = () => import('@/views/accept/AcceptListComponent')
+const AcceptOrderingComponent = () => import('@/views/accept/AcceptOrderingComponent')
+const ToEndAddressComponent  = () => import('@/views/accept/ToEndAddressComponent')
+const OrderOverComponent  = () => import('@/views/accept/OrderOverComponent')
 
 //2.通过Vue.use(插件)，安装插件
 Vue.use(VueRouter)
@@ -88,7 +91,23 @@ const routes = [
   {
     path: '/accept',
     component: AcceptComponent
-  }
+  },
+  {
+    path: '/accept/list',
+    component: AcceptListComponent
+  },
+  {
+    path: '/accept/taking',
+    component: AcceptOrderingComponent
+  },
+  {
+    path: '/accept/toEndAddress',
+    component: ToEndAddressComponent
+  },
+  {
+    path: '/accept/orderOver',
+    component: OrderOverComponent
+  },
 
 ]
 

@@ -1,6 +1,6 @@
 <template>
   <div id="loginForm">
-    <h4 id="login-text">登录</h4>
+    <h4 id="login-text">司机登录</h4>
     <el-form :model="user" status-icon :rules="rules" ref="user" label-width="0px" class="userForm">
         <div class="input-container">
           <el-form-item prop="mobile">
@@ -75,23 +75,23 @@ export default {
           return;
         }
         requestGateway({
-          url: '/api/user/login',
+          url: '/api/driver/login',
           method: 'post',
           data: this.user
         })
         .then(res => {
           if (res.data.status === 200) {//将用户信息传入vuex中修改
-            store.commit('setUser', {mobile: vm.user.mobile, password: vm.user.password})
+            store.commit('setDriver', {mobile: vm.user.mobile, password: vm.user.password})
             store.commit('setIsLogin', "yes")
             store.commit('setXToken', res.data.data)
-            //退回
-            vm.$router.push('/home')
+            //到主页
+            vm.$router.replace('/accept')
             vm.$message({showClose: true,message: "成功",type: 'success',offset: '60'})
             return;
           } 
-          vm.$message({showClose: true,message: res.data.message,type: 'info',offset: '60'})
+          vm.$message({showClose: true,message: res.data.message,type: 'error',offset: '60'})
         })
-        .catch(err => {vm.$message({showClose: true, message: err, type: 'error', offset: '60'})})
+        .catch(err => {vm.$message({showClose: true, message: err, type: 'error', offset: '60'})});
       });
     },
 

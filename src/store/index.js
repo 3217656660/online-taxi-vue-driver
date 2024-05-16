@@ -89,8 +89,8 @@ const state = {
   AcceptPosition: [],
   IsLogin: localStorage.getItem('IsLogin'),
   CurrentLocation: {
-    longitude: 118.5079,
-    latitude: 31.6704,
+    longitude: 1,
+    latitude: 1,
     address: '马鞍山市市人民政府',
   },
 };

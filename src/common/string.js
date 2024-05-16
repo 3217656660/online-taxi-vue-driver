@@ -12,7 +12,7 @@ export const GatewayUrl = "http://localhost/taxi";
 export const MapSearchUrl = "https://restapi.amap.com/v3/geocode/geo";
 
 //高德api 模糊keywords => 模糊搜索结果
-export const MapSearchSuggestUrl = "https://restapi.amap.com/v3/assistant/inputtips";
+export const MapSearchSuggestUrl = "https://restapi.amap.com/v5/place/around";
 
 //高德api ip => 所在城市
 export const MapIpSearchCityUrl = "https://restapi.amap.com/v3/ip";

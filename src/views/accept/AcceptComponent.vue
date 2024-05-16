@@ -1,75 +1,129 @@
 <template>
   <div id="accept">
+
     <nav-bar-component>
       <div slot="left">
-        <h3>接单</h3>
+        <el-button class="location-btn" @click="location" type="text">定位</el-button>
+      </div>
+      <div slot="center">
+        <SearchSuggestComponent ref="searchChild" :is-disabled="false" />
+      </div>
+      <div slot="right">
+        <el-button class="accept-btn" @click="toAccept" type="text">接单</el-button>
       </div>
     </nav-bar-component>
 
     <div class="map-content">
-      <map-component ref="childMap" />
+      <map-component ref="childMap" @map-init-success="getMapProperties" />
     </div>
 
-    <div class="location-content">
-      <el-input class="input" v-model="input" placeholder="请输入内容"></el-input>
-      <el-button class="location-btn" @click="location">定位</el-button>
-      <el-button class="accept-btn" @click="toAccept">接单</el-button>
-    </div>
   </div>
 </template>
 
 <script>
-import { checkIsLogin, makeElButtonBlurMixin } from '@/common/mixin';
+import { checkIsLogin, geoLocationWithSDK, makeElButtonBlurMixin } from '@/common/mixin';
 import MapComponent from '@/components/home/MapComponent.vue';
 import NavBarComponent from '@/components/navbar/NavBarComponent.vue';
-import { requestMapSearch } from '@/network/request';
+import SearchSuggestComponent from '@/components/searchSuggest/SearchSuggestComponent.vue';
+import { requestGateway, requestMapSearch } from '@/network/request';
 import store from '@/store';
 
 export default {
   name: "AcceptComponent",
-  mixins: [checkIsLogin, makeElButtonBlurMixin],
+  mixins: [checkIsLogin, makeElButtonBlurMixin, geoLocationWithSDK],
   components: {
     NavBarComponent,
-    MapComponent
+    MapComponent,
+    SearchSuggestComponent
   },
   data() {
     return {
       input: '安徽工业大学东校区',
       driving: null, //AMap.Driving实例
       marker: null,
+      map: null,
+      aMap: null,
     }
   },
   mounted() {
+    //初始化
+    this.init();
+
     this.$message({ showClose: true, message: "如定位不准请手动输入当前位置点击定位", type: 'info', offset: '60', duration: 0 })
   },
   methods: {
-    //自动定位
-    autoLocation() {
-
+    
+    init() {
+      //查询司机信息设置到本地
+      requestGateway({
+        url: '/api/driver/getByMobile',
+        method: 'get',
+        params: {
+          mobile: store.state.Driver.mobile,
+        }
+      }).then(res => {
+        if(res.data.status === 600){
+          this.$message({ showClose: true, message: "司机信息获取失败", type: 'error', offset: '60'})
+          return;
+        }
+        store.commit('setDriver', res.data.data);
+      }).catch(err => {
+        console.log('err :>> ', err);
+      });
     },
 
+    
+    /**
+     * 获取地图的属性,地图子组件加载完成时触发
+     */
+    getMapProperties() {
+      this.map = this.$refs.childMap.map
+      this.marker = this.$refs.childMap.marker
+      this.aMap = this.$refs.childMap.aMap
+
+      //打包的时候解开
+      //this.geoLocation(this.map, this);
+      console.log('this.map,this.marker,this.aMap :>> ', this.map, this.marker, this.aMap);
+    },
+
+
+    //自动定位
+    autoLocation() {
+      this.geoLocation(this.map, this);
+      this.addPoint([store.state.CurrentLocation.longitude, store.state.CurrentLocation.latitude])
+    },
+
+
     //手动定位
-    location(event) {
+    location() {
       const vm = this
       vm.removePoint()
       if (vm.input === null) {
         vm.$message({ showClose: false, message: "输入地点不能为空", type: 'error', offset: '60', duration: 0 })
         return;
-      }     
-      vm.makeElButtonBlur(event)
-      requestMapSearch({
-        searchAddress: vm.input
-      }).then(res => {
-        const list = ('' + res.data.geocodes[0].location).split(',')
-        store.commit('setAcceptPosition', list)
-        vm.$refs.childMap.map.setZoomAndCenter(16, list)
-        //将点展示出来
-        vm.addPoint(list);
-      }).catch(err => {
-        console.log('err :>> ', err);
-        vm.$message({ showClose: true, message: "起点地址查询失败，请稍后重试", type: 'error', offset: '60' });
-      });
+      }
+      //用户手敲的地址并没有选择提示框内的地址
+      const regex = /市/
+      let address = this.$refs.searchChild.searchSuggestInput
+      const result = regex.test(address)
+      //添加市缩小范围
+      if (!result) {//没有市默认本市
+        address = store.state.City + address
+        requestMapSearch({
+          searchAddress: address
+        }).then(res => {
+          const list = ('' + res.data.geocodes[0].location).split(',')
+          store.commit('setAcceptPosition', list)
+          vm.$refs.childMap.map.setZoomAndCenter(17, list)
+          //将点展示出来
+          vm.addPoint(list);
+        }).catch(err => {
+          console.log('err :>> ', err);
+          vm.$message({ showClose: true, message: "起点地址查询失败，请稍后重试", type: 'error', offset: '60' });
+        });
+      }
     },
+
 
     //添加点标记
     addPoint(location) {
@@ -86,6 +140,7 @@ export default {
       this.$message({ showClose: false, message: "地址查询成功", type: 'success', offset: '60' });
     },
 
+
     //删除点标记
     removePoint() {
       const vm = this
@@ -95,11 +150,12 @@ export default {
       }
     },
 
-    //去接单
-    toAccept(event) {
-      this.makeElButtonBlur(event)
 
-    }
+    //去接单
+    toAccept() {
+      //去可接单列表的界面
+      this.$router.push('/accept/list');
+    },
 
   }
 
@@ -120,28 +176,6 @@ export default {
   height: auto;
   padding: 0;
   top: 44px;
-  bottom: 90px;
-}
-
-.location-content {
-  width: 100%;
-  position: fixed;
   bottom: 50px;
-}
-
-.input {
-  width: 60%;
-}
-
-.location-btn {
-  position: fixed;
-  right: 20%;
-  width: 20%;
-}
-
-.accept-btn {
-  position: fixed;
-  right: 0;
-  width: 20%;
 }
 </style>

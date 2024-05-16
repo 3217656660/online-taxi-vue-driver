@@ -53,10 +53,6 @@ export default {
         .then(list => {
           //将name键值转换为value
           this.suggestList = list.map(({ name, ...rest }) => ({ value: name, ...rest }));
-          //let suggestList = this.suggestList;
-          //let results = queryString ? suggestList.filter(this.createFilter(queryString)) : suggestList;
-          // 调用 callback 返回建议列表的数据
-          //console.log('vue :查询到的结果' + suggestList)
           cb(this.suggestList);
         });
     },
@@ -83,11 +79,7 @@ export default {
     handleSelect(item) {
       const position = item.location + '';
       const location = position.split(',')
-      store.commit('setHomePosition', {
-        longitude: location[0], 
-        latitude: location[1],
-        address: item.cityname + item.adname + item.address,
-      });
+      store.commit('setAcceptPosition', location);
     }
 
   },

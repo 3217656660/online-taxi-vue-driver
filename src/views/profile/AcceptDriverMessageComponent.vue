@@ -33,7 +33,7 @@
 import { Error_Msg } from '@/common/string';
 import { requestGateway } from '@/network/request';
 import store from '@/store';
-import AcceptEditMessageFormComponent from '@/views/accept/AcceptEditMessageFormComponent.vue';
+import AcceptEditMessageFormComponent from '@/views/profile/AcceptEditMessageFormComponent.vue';
 export default {
   name: "AcceptDriverMessageComponent",
   components: {

@@ -1,137 +1,238 @@
 <template>
-  <div id="acceptList">
+  <div id="acceptList-content">
 
-    <div class="title">
-      <h3>可接单列表</h3>
-    </div>
-    
-    <div class="acceptAbleList">
-      <el-table :data="tableData">
-        <el-table-column prop="startAddress" label="起点" width="100">
-        </el-table-column>
-        <el-table-column prop="endAddress" label="终点" width="100">
-        </el-table-column>
-        <el-table-column prop="distance" label="距离">
-          
-        </el-table-column>
-        <el-table-column prop="price" label="估价">
-          
-        </el-table-column>
-        <el-table-column label="操作" fixed="right">
-          <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">接单</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+    <NavBarComponent class="nav-content">
+      <div slot="left">
+        <el-button class="back-btn" @click="$router.back()">
+          <i class="el-icon-back"></i>
+        </el-button>
+      </div>
+
+      <div slot="center">
+        <h3>可接单列表</h3>
+      </div>
+
+      <div slot="right">
+        <i :class="fleshClass" id="flesh-i" @click="reLoad"></i>
+      </div>
+    </NavBarComponent>
+
+    <div v-show="tableData.length !== 0" class="infinite-list-wrapper">
+      <template>
+        <ul class="infinite-list" v-infinite-scroll="load" :infinite-scroll-disabled="disable" style="overflow:auto">
+          <li v-for="(item, i) in tableData" class="infinite-list-item" :key="i">
+            <div class="order-content">
+              <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                  <span>订单详情：</span>
+                  <el-button style="float: right; padding: 3px 0" type="text" @click="acceptOrder(item)">接单</el-button>
+                </div>
+                <div>
+                  订单id: {{ item.id }}
+                </div>
+                <div>
+                  起点：{{ item.startAddress }}
+                </div>
+                <div>
+                  终点：{{ item.endAddress }}
+                </div>
+                <div>
+                  距离：{{ item.distance / 1000 }}km
+                </div>
+                <div>
+                  估价：{{ showPrice(item.distance) }}元
+                </div>
+              </el-card>
+            </div>
+          </li>
+        </ul>
+      </template>
     </div>
 
-    <map-component style="display: none;" ref="childMap" @child-loaded="getPosition"/>
+    <div v-show="tableData.length === 0" class="empty-content">
+      <el-empty description="还没有可接订单"></el-empty>
+    </div>
+
   </div>
 </template>
 
 <script>
 import { Error_Msg } from '@/common/string';
-import MapComponent from '@/components/home/MapComponent.vue';
+import NavBarComponent from '@/components/navbar/NavBarComponent.vue';
 import { requestGateway } from '@/network/request';
 import store from '@/store';
 
 export default {
   name: "AcceptListComponent",
-  mounted(){
-    //获取司机地理位置信息
-    this.getPosition();
+  mounted() {
     //获取可接单列表
     this.getList();
-    
   },
   components: {
-    MapComponent
+    NavBarComponent,
+
   },
-  data(){
+  data() {
     return {
-      tableData: [
-        { 
-          id: 1,
-          userId: 1,
-          startAddress: '八五三农场',
-          endAddress: '八五二农场',
-          distance: 30.34 + 'km',
-          price: 50.12 + '元',
-        },
-        { 
-          id: 2,
-          userId: 1,
-          startAddress: '八五三农场',
-          endAddress: '八五二农场',
-          distance: 30.34 + 'km',
-          price: 50.12 + '元',
-        }
-      ],
+      tableData: [],
+      haveMsg: false,
       AMap: null,
+      fleshClass: 'el-icon-refresh-left',
+      staticFleshClass: 'el-icon-refresh-left',
+      loadingFleshClass: 'el-icon-loading',
+      pageNum: 0,
+      pageSize: 5,
+      disable: false,
     }
   },
   methods: {
-      handleClick(row) {
-        //提交到服务端
-
-        console.log(row);
-      },
-
-
-      getPosition(){
-        //获取位置信息,并存入仓库中
-        store.commit('setDriverActionTakeOrderVo', {
-          nowAddressLongitude: 116.40,
-          nowAddressLatitude: 39.40
-        });
-        
-      },
-
-      
-      /**
-       * 获取接单列表
-       */
-      getList(){
-        const vm = this;
-        const driverActionTakeOrderVo = {
-          "nowAddressLongitude": 127.16,
-          "nowAddressLatitude": 44.93
+    /**
+     * 司机接单
+     * @param {*} order 点击的订单信息
+     */
+    acceptOrder(order) {
+      order.driverId = store.state.Driver.id;
+      console.log(order);
+      const vm = this;
+      requestGateway({
+        url: '/api/order/acceptOrder',
+        method: 'put',
+        data: order
+      }).then(res => {
+        if (res.data.status === 600) {
+          vm.$message({ showClose: true, message: res.data.message, type: 'error', offset: '60' })
+          return;
+        } else if (res.data.status === 200) {
+          //接单成功
+          store.commit('setOrder', order);
+          //改变界面
+          this.$router.push('/accept/taking');
+          vm.$message({ showClose: true, message: res.data.message, type: 'success', offset: '60' })
         }
-        requestGateway({
-          url: '/api/main/getAbleOrderList',
-          method: 'get',
-          params: driverActionTakeOrderVo
-        }).then(res => {
-          console.log('res.data :>> ', res.data);
-          if(res.data !== undefined && res.data === Error_Msg.NO_ACCEPTABLE_ORDER){
-            vm.$message({showClose: true, message: Error_Msg.NO_ACCEPTABLE_ORDER, type: 'info', offset: '60'})
-            return;
-          }
-          vm.tableData = res.data;
-        }).catch(err => {
-          console.log('err :>> ', err);
-        })
-      },
+      }).catch(err => {
+        console.log('err :>> ', err);
+      });
     },
-    computed: {
-      distance(){
-        return 1;
-      },
 
 
-      price(){
-        return 1;
-      }
-    }
+    load() {
+      this.getList()
+    },
+
+
+    /**
+     * 重新加载
+     */
+    reLoad() {
+      this.disable = false;
+      this.tableData = []
+      this.pageNum = 0
+      this.getList()
+    },
+
+
+    /**
+     * 获取接单列表
+     */
+    getList() {
+      const vm = this;
+      vm.fleshClass = vm.loadingFleshClass;
+      const nextPage = vm.pageNum + 1;
+      requestGateway({
+        url: '/api/order/getAcceptList',
+        method: 'get',
+        params: {
+          "longitude": 1,//test store.state.CurrentLocation.longitude
+          "latitude": 1,//test store.state.CurrentLocation.latitude
+          "pageNum": nextPage,  //请求下一页
+          "pageSize": vm.pageSize,
+        }
+      }).then(res => {
+        vm.fleshClass = vm.staticFleshClass;
+        console.log('res.data :>> ', res.data);
+        if (res.data.status === 600 && res.data.message === '当前没有可接订单') {
+          //没订单接
+          this.disable = true
+          vm.$message({ showClose: true, message: Error_Msg.NO_ACCEPTABLE_ORDER, type: 'info', offset: '60' })
+          return;
+        } else if (res.data.status === 600) {
+          //出现错误
+          this.disable = true
+          vm.$message({ showClose: true, message: res.data.message, type: 'error', offset: '60' })
+          return;
+        } else if (res.data.status === 200 && res.data.data === 'over') {
+          //到头了
+          vm.$message({ showClose: true, message: '到头啦', type: 'info', offset: '60' })
+          vm.disable = true;
+          return;
+        }
+        //拼接list
+        vm.pageNum = nextPage;
+        vm.tableData = vm.tableData.concat(res.data.data);
+      }).catch(err => {
+        console.log('err :>> ', err);
+        vm.fleshClass = vm.staticFleshClass;
+      });
+    },
+
+
+    showPrice(distance) {
+      const km = distance / 1000
+      if (km <= 3) return 8;
+      //保留两位小数
+      return Math.round((8 + (km - 3) * 2.4) * 100) / 100;
+    },
+
+  },
+
+  computed: {
+
+  }
 
 }
 </script>
 
 <style scoped>
-  @import url('@/assets/css/accept.css');
+.nav-content {
+  position: fixed;
+  z-index: 99;
+}
 
-.acceptAbleList {
+.el-icon-back {
+  font-size: 25px;
+}
+
+#flesh-i {
+  font-size: 22px;
+}
+
+.back-btn {
+  /* 让按钮透明 */
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.order-content {
   position: relative;
-  margin-top: 12px;
+  margin-top: 2px;
+}
+
+.infinite-list {
+  position: fixed;
+  width: 100%;
+  top: 44px;
+  left: 0;
+  bottom: 50px;
+}
+
+.infinite-list-wrapper {
+  position: relative;
+  top: 0px;
+  bottom: 300px;
+}
+
+.empty-content {
+  position: relative;
+  top: 200px;
 }
 </style>

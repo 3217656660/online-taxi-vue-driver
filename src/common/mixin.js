@@ -129,19 +129,7 @@ export const geoLocationWithSDK = {
         store.commit('setEndCity', result.city);
         console.log('vue :getCurrentLocation :>> ', JSON.stringify(store.state.CurrentLocation));
         console.log('vue :city :>> ', store.state.City);
-
-        if (vm.marker != null) {
-          vm.marker.setMap(null);
-          vm.marker = null;
-        }
-        //添加点标记
-        const marker = new vm.aMap.Marker({
-          icon: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-          position: [store.state.CurrentLocation.longitude, store.state.CurrentLocation.latitude],
-          offset: new vm.aMap.Pixel(-13, -30)
-        });
-        marker.setMap(this.map);
-        vm.marker = marker;
+        console.log('vue :vm :>> ', vm);
       } catch (e) {
         console.error('vue: Error getting location:', e);
       }

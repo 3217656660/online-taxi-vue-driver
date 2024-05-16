@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { sleepMixin } from '@/common/mixin';
+import { geoLocationWithSDK, sleepMixin } from '@/common/mixin';
 import { Error_Msg } from '@/common/string';
 import MapComponent from '@/components/home/MapComponent.vue';
 import NavBarComponent from '@/components/navbar/NavBarComponent.vue';
@@ -28,17 +28,19 @@ import store from '@/store';
 
 export default {
   name: "HomeComponent",
-  mixins: [sleepMixin],
+  mixins: [sleepMixin, geoLocationWithSDK],
   components: {
     NavBarComponent,
     MapComponent,
     SearchSuggestComponent,
-
   },
   data() {
     return {
 
     }
+  },
+  mounted() {
+
   },
   methods: {
     /**
@@ -67,6 +69,11 @@ export default {
         });
       } else {//用户选了
         vm.$refs.childMap.map.setZoomAndCenter(18, [store.state.HomePosition.longitude, store.state.HomePosition.latitude]);
+        store.commit('setCurrentLocation', {
+          longitude: store.state.HomePosition.longitude,
+          latitude: store.state.HomePosition.latitude,
+          address: store.state.HomePosition.address,
+        });
         store.commit('setHomePosition', null)
       }
 

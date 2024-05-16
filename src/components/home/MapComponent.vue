@@ -9,6 +9,7 @@ window._AMapSecurityConfig = {
   securityJsCode: "b96e81c0ef8264f5345a7da790828a5a"
 };
 
+import { geoLocationWithSDK } from '@/common/mixin';
 import AMapLoader from '@amap/amap-jsapi-loader'; //导入默认的不加外面括号
 export default {
   name: "MapComponent",
@@ -48,11 +49,14 @@ export default {
             resizeEnable: true,
           });
           
-          //定位并设置中心点,并添加定位点
+          //定位 test
           //this.geoLocation(this.map, this);
           
           //放大缩小,位置左上
           this.map.addControl(new AMap.ToolBar({position: 'RT'}));
+          
+          //通知父组件地图加载完毕
+          this.$emit('map-init-success');
         })
         .catch((e) => {
           console.log('err' + e);
