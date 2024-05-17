@@ -52,7 +52,7 @@ export default {
     this.$message({ showClose: true, message: "如定位不准请手动输入当前位置点击定位", type: 'info', offset: '60', duration: 0 })
   },
   methods: {
-    
+
     init() {
       //查询司机信息设置到本地
       requestGateway({
@@ -62,17 +62,51 @@ export default {
           mobile: store.state.Driver.mobile,
         }
       }).then(res => {
-        if(res.data.status === 600){
-          this.$message({ showClose: true, message: "司机信息获取失败", type: 'error', offset: '60'})
+        if (res.data.status === 600) {
+          this.$message({ showClose: true, message: "司机信息获取失败", type: 'error', offset: '60' })
           return;
         }
         store.commit('setDriver', res.data.data);
+
+        this.afterInit()
+      }).catch(err => {
+        console.log('err :>> ', err);
+      });
+
+    },
+
+
+    afterInit() {
+      //查询订单信息设置到本地，并决定跳转到哪个页面
+      requestGateway({
+        url: '/api/order/checkDriverOrder',
+        method: 'get',
+        params: {
+          driverId: store.state.Driver.id,
+        }
+      }).then(res => {
+        if (res.data.status === 600) {
+          this.$message({ showClose: true, message: res.data.message, type: 'error', offset: '60' })
+          return;
+        }
+        const order = res.data.data
+        store.commit('setOrder', order);
+        if (order === null) {
+          //没有待解决的订单
+          return;
+        } else if (order.status === 1) {
+          //正在前往起点路上,或还没验证过验证码
+          this.$router.replace('/accept/taking');
+        } else if (order.status === 2) {
+          //前往终点，已经验证过验证码
+          this.$router.replace('/accept/toEndAddress');
+        }
       }).catch(err => {
         console.log('err :>> ', err);
       });
     },
 
-    
+
     /**
      * 获取地图的属性,地图子组件加载完成时触发
      */

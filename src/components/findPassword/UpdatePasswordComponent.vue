@@ -60,12 +60,10 @@ export default {
         callback();
     };
 
-    //再次确认密码校验
-    let validateConfirmPassword = (rule, value, callback) => {
+    //新密码校验
+    let validateNewPassword = (rule, value, callback) => {
       if (!regex.passwordRegex.test(value))
         callback(new Error(Error_Msg.PASSWORD_REGEX_ERROR));
-      else if (value !== this.form.oldPassword)
-        callback(new Error(Error_Msg.CONFIRMPASSWORD_REGEX_ERROR));
       else
         callback();
     };
@@ -79,7 +77,7 @@ export default {
       rules: {
         mobile: [{ validator: validateMobile, trigger: 'blur' }],
         oldPassword: [{ validator: validatePassword, trigger: 'blur' }],
-        newPassword: [{ validator: validateConfirmPassword, trigger: 'blur' }]
+        newPassword: [{ validator: validateNewPassword, trigger: 'blur' }]
       },
       defaultNavColor: 'black',
       backNavColor: 'darkgray',
@@ -96,7 +94,7 @@ export default {
           return;
         }
         requestGateway({
-          url: '/api/user/update/password',
+          url: '/api/driver/update/password',
           method: 'put',
           params: this.form
         }).then(res => {

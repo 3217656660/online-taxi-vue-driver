@@ -11,7 +11,6 @@ const FindPasswordComponent = () => import("../components/findPassword/FindPassw
 const AgreementComponent = () => import("../views/agreement/AgreementComponent")
 const UserProfileComponent = () => import("../views/profile/UserProfileComponent")
 const UserAllOrderComponent = () => import("../views/profile/UserAllOrderComponent")
-const UserNoPaymentComponent = () => import("../views/profile/UserNoPaymentComponent")
 const UserTakingOrderComponent = () => import("../views/profile/UserTakingOrderComponent")
 const MainMessageComponent = () => import("../views/message/MainMessageComponent")
 const SettingComponent = () => import("../views/profile/SettingComponent")
@@ -43,10 +42,6 @@ const routes = [
           {
             path: '/profile/userProfile/allOrder',
             component: UserAllOrderComponent,
-          },
-          {
-            path: '/profile/userProfile/noPayment',
-            component: UserNoPaymentComponent,
           },
           {
             path: '/profile/userProfile/taking',

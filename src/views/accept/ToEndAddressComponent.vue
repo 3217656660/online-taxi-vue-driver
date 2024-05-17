@@ -3,26 +3,14 @@
 
     <NavBarComponent>
       <div slot="center">
-        {{ navText }}
+        正在前往终点
       </div>
-      <div slot="right" v-show="veritySuccess">
+      <div slot="right">
         <el-button @click="arriveEndAddress" type="text">到达终点</el-button>
       </div>
     </NavBarComponent>
 
-    <div v-show="!veritySuccess">
-
-      <div class="input-content">
-        <el-input v-model="input" placeholder="请输入四位验证码" maxlength="4" show-word-limit></el-input>
-      </div>
-
-      <div class="btn-content">
-        <el-button @click="verityCode">验证</el-button>
-      </div>
-
-    </div>
-
-    <div v-show="veritySuccess" class="map-content">
+    <div class="map-content">
       <MapComponent ref="childMap" @map-init-success="getMapProperties" />
       <div id="panel" style="display: none;"></div>
     </div>
@@ -44,22 +32,20 @@ export default {
     MapComponent
   },
   mixins: [geoLocationWithSDK],
-  mounted() {
-    this.init();
-  },
   data() {
     return {
-      navText: '请输入用户提供的四位数字',
       input: '',
-      veritySuccess: false,
       map: null,
       aMap: null,
     }
   },
+  mounted() {
+    this.init();
+  },
   methods: {
 
     init() {
-      
+
     },
 
 
@@ -72,45 +58,15 @@ export default {
 
       //打包的时候解开 test
       //this.geoLocation(this.map, this);
+
+      //前往终点
+      this.drivingToEndAddress(0)
     },
 
 
     //自动定位
     autoLocation() {
       this.geoLocation(this.map, this);
-    },
-
-
-    /**
-     * 验证验证码
-     */
-    verityCode() {
-
-      if (this.input.length !== 4) {
-        this.$message({ showClose: false, message: "输入的验证码长度不正确", type: 'error', offset: '60' });
-        return;
-      }
-      const vm = this;
-      requestGateway({
-        url: '/api/order/verityCode',
-        method: 'post',
-        params: {
-          id: store.state.Order.id,
-          code: vm.input,
-        }
-      }).then(res => {
-        console.log('res :>> ', res);
-        if (res.data.status === 600) {
-          vm.$message({ showClose: false, message: res.data.message, type: 'error', offset: '60' });
-          return;
-        }
-        //验证成功，从起点到终点导航
-        vm.veritySuccess = true
-        vm.navText = '正在前往终点'
-        vm.drivingToEndAddress(0);
-      }).catch(err => {
-        console.log('err :>> ', err);
-      });
     },
 
 
@@ -194,14 +150,13 @@ export default {
           vm.$message({ showClose: false, message: res.data.message, type: 'error', offset: '60' });
           return;
         }
+
         //到达终点成功,订单结束
-        vm.$router.replace('/accept/orderOver')
+        vm.$router.replace('/accept/orderOver');
       }).catch(err => {
         console.log('err :>> ', err);
       });
     },
-
-
 
   },
 }

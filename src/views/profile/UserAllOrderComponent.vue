@@ -51,13 +51,13 @@ export default {
     //选页处理函数
     handleSelectPage(clickPage){
       this.currentPage = clickPage
-      let localUser = JSON.parse( localStorage.getItem('User') )
-      const userId = localUser.id
+      let localDriver = JSON.parse( localStorage.getItem('Driver') )
+      const driverId = localDriver.id
       const vm = this
       requestGateway({
-        url:"/api/order/get/user/history",
+        url:"/api/order/get/driver/history",
         params:{
-          userId: userId,
+          driverId: driverId,
           pageNum: clickPage,
           pageSize: vm.pageSize
         }
@@ -93,7 +93,6 @@ export default {
   },
   mounted(){
     this.handleSelectPage(1)
-
   },
 }
 </script>
